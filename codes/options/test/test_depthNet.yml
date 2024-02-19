@@ -1,0 +1,62 @@
+name: DepthNet_test_new  #   DepthNet_test_ablate_depth_matrix
+suffix: ~  # add suffix to saved images
+model: sftmd_depthCond # sftmd for baseline model, sftmd_depthCond for final model
+distortion: sr
+scale: 8
+crop_border: ~  # crop border when evaluation. If None(~), crop the scale pixels
+gpu_ids: [0]
+kernel_size: 21
+code_length: 10
+sig_min: 0.2
+sig_max: 4.0
+sig: 2.6
+
+datasets:
+  test_1:  # the 1st test dataset  test_1
+    name: DIV2K
+    mode: LQGTker_Depth
+    dataroot_GT: ./dataset/endoscopy/Kvasir/HR/test
+    #./dataset/EndoL2H_dataset/x8/A/test
+    ## scale == 2
+    # dataroot_LQ: ./dataset/Kvasir_dataset/x2_512/test
+    # dataroot_depthMap: ./dataset/Kvasir_dataset/x2_512_depth_map/test_npy
+    ## scale == 4
+    # dataroot_LQ: ./dataset/Kvasir_dataset/x4_256/test
+    # dataroot_depthMap: ./dataset/Kvasir_dataset/x4_256_depth_map/test_npy
+    ## scale == 8
+    # dataroot_LQ: ./dataset/Kvasir_dataset/x8_128/test
+    # dataroot_depthMap: ./dataset/Kvasir_dataset/x8_128_depth_map/test_npy
+    ## scale == 8
+
+    dataroot_LQ: ./dataset/endoscopy/Kvasir/LR/test
+    dataroot_depthMap: ./dataset/endoscopy/Kvasir/LR_depth/test_npy
+    GT_size: 1024
+    LR_size: 128 #256
+    color: RGB
+    depthMaskNum: 10
+    depthFixedRange: false # if false, range=[0,1]; else, range=[min, max]
+    
+
+#### network structures
+network_G:
+  which_model_G: DepthNet #SFTMD 
+  in_nc: 3
+  out_nc: 3
+  nf: 64
+  nb: 16
+  upscale: 8
+  code_length: 10
+  depth_latent_ch: 256 # default:256 for x8/x4, 32 for x2
+  norm_type: weight_norm # default: 'weight_norm' ; instance_norm
+  use_trainable_params: true # default: true
+  norm_gamma: 0
+  norm_beta: 0
+  which_ResBlk_depth: [0,1,2,3,4,5,6,7,8,9,10,11,12,13] # [0,1,2,3,4,5,6,7,8,9,10,11,12,13] for 4/8; [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] for 2$
+  ### ablation studies
+  ablate_depth_matrix: false # default: false
+  ablate_depth_block: false # default: false
+
+
+#### path
+path:
+  pretrain_model_G: ./experiments/001_DepthNet_ResBlk_depthMask_archived_220319-233151/models/latest_G.pth

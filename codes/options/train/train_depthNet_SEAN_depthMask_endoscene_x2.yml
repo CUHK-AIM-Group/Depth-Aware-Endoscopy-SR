@@ -1,0 +1,162 @@
+#### general settings
+name: 001_DepthNet_ResBlk_depthMask
+use_tb_logger: true
+model: sftmd_depthCond
+distortion: sr
+scale: 2
+gpu_ids: [0,1] #[3,4,5] #[0,1,2]
+kernel_size: 21
+code_length: 10
+sig_min: 0.2
+sig_max: 4.0
+sig: 2.6
+
+#### datasets
+datasets:
+  train:
+    name: DIV2K
+    mode: EndoScene_Depth
+    dataroot_GT: ./dataset/CVC-EndoSceneStill/images
+    dataroot_LQ: ./dataset/CVC-EndoSceneStill/degradation_noise_15_eigen_10
+    data_augment: false # default: false
+    dataroot_LQ_Aug: None
+    dataroot_depthMap: ./dataset/CVC-EndoSceneStill/degradation_noise_15_eigen_10/depth
+    dataset_split_list: ./dataset/CVC-EndoSceneStill/train.txt
+    data_num: 1600 # how many image we use during training
+    use_shuffle: true
+    n_workers: 4  # per GPU
+    batch_size: 8 #4 #2 # default: 16 #32
+    GT_size: 384
+    LR_size: 192
+    use_flip: true
+    use_rot: false
+    color: RGB
+    depthMaskNum: 10
+    depthFixedRange: false # if false, range=[0,1]; else, range=[min, max]
+  val:
+    scale: 2
+    name: DIV2K
+    mode: EndoScene_Depth
+    dataroot_GT: ./dataset/CVC-EndoSceneStill/images
+    dataroot_LQ: ./dataset/CVC-EndoSceneStill/degradation_noise_15_eigen_10  
+    dataroot_depthMap: ./dataset/CVC-EndoSceneStill/degradation_noise_15_eigen_10/depth #depth
+    dataset_split_list: ./dataset/CVC-EndoSceneStill/valid.txt
+    depthMaskNum: 10
+    depthFixedRange: false # if false, range=[0,1]; else, range=[min, max]
+
+#### network structures
+network_G:
+  which_model_G: DepthNet #SFTMD 
+  in_nc: 3
+  out_nc: 3
+  nf: 64
+  nb: 16
+  upscale: 2
+  code_length: 10
+  depth_latent_ch: 256 # default:256
+  norm_type: weight_norm # default: 'weight_norm' ; instance_norm
+  use_trainable_params: true # default: true
+  norm_gamma: 0
+  norm_beta: 0
+  which_ResBlk_depth: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+  ### ablation studies
+  ablate_depth_matrix: false # default: false
+  ablate_depth_block: false # default: false
+#### path
+path:
+  pretrain_model_G: ~ #'./experiments/001_DepthNet_ResBlk_depthMask_archived_210503-004653/models' #16000_G.pth
+  strict_load: true
+  resume_state: ~ #'./experiments/001_DepthNet_ResBlk_depthMask_archived_210503-004653/training_state/27000.state'
+
+#### training settings: learning rate scheme, loss
+train:
+  lr_G: !!float 1e-3 # 1e-4
+  lr_scheme: CosineAnnealingLR_Restart # MultiStepLR #  
+  beta1: 0.9
+  beta2: 0.99
+  niter:  27200 #54400 #109600 #54400  
+  warmup_iter: -1  # no warm up
+  T_period: [6800, 6800, 6800, 6800] #[13600, 13600, 13600, 13600] #[27400, 27400, 27400, 27400] #[13600,13600,13600,13600] 
+  restarts: [6800, 13600, 20400] #[13600, 27200, 40800] #[13600,27200,40800] 
+  restart_weights: [1, 1, 1]
+  eta_min: !!float 1e-7
+  lr_steps: [6800, 13600, 20400] #[13600, 27200, 40800] #[27400, 54800, 82200] #[13600,27200,40800] 
+  lr_gamma: 0.5
+
+  pixel_criterion: l1
+  pixel_weight: 1.0 # default: 1.0
+
+  depth_loss:
+    depth_criterion: l1
+    depth_weight: [0.1, 0,0,0]
+    use_depth_criterion : false
+    pretrained_model_path: './codes/pretrained_model'
+
+  vgg_loss:
+    use_vgg_criterion : false
+    vgg_type: vgg19
+    vgg_layers: [4, 9, 18, 27]
+    vgg_criterion: l1
+    vgg_weight: [1,1,1,1]
+    use_depth_mask_layer: [true,true,true,true]
+    use_depth_mask: false
+
+  ssim_loss:
+    use_ssim_criterion: false 
+    ssim_weight: 1.0
+
+  mask_loss:
+    use_mask_criterion: false # default: true
+    mask_criterion: smoothl1 # default: smootl1
+    mask_weight: 1.0 # default: 1.0
+
+  dynamic_loss:
+    use_dynamic_criterion: true # default: true
+    dynamic_criterion: smoothl1 # default: smootl1
+    dynamic_weight: 10.0 # default: 1.0
+
+
+  depth_l1_weight: 1 #0.15
+  depth_ssim_weight: 1 #0.85
+
+  manual_seed: 0
+  val_freq: !!float 200 #5e3
+
+#### logger
+logger:
+  print_freq: 50
+  save_checkpoint_freq: !!float 200 #5e4
+
+sftmd:
+  gpu_ids: [6, 7]
+  is_train: False
+  scale: 2
+  datasets:
+    test:
+      name: DIV2K
+      mode: LQGTker_Depth
+      phase: test
+      dataroot_GT: ./dataset/EndoL2H_dataset/x8/A/test
+      dataroot_LQ: ./dataset/Kvasir_dataset/x4_256/test #/home/wentchen/dataset/Kvasir_dataset/x8_128_DA/test #
+      dataroot_depthMap: ./dataset/Kvasir_dataset/x4_256_depth_map/test_npy
+      GT_size: 1024
+      LR_size: 512
+      data_type: img
+      color: RGB
+
+  model: sftmd_depth
+
+  network_G:
+    which_model_G: DepthNet #SFTMD
+    in_nc: 3
+    out_nc: 3
+    nf: 64
+    nb: 16
+    upscale: 2
+    code_length: 10
+    which_ResBlk_depth: [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
+
+  path:
+    results_root: ./results
+    pretrain_model_G: latest_G.pth
+    strict_load: True

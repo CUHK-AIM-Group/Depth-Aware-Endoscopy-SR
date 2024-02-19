@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 python3 codes/test.py -opt_F codes/options/test/test_depthNet.yml
