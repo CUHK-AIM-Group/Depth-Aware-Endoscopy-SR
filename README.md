@@ -12,8 +12,8 @@ Please follow the `requirements.txt`
 
 ## Dataset
 In this work, we use the Kvasir and the EndoScene datasets. <br>
-1. We provide the HR and LR images (factor=8) for the Kvasir dataset, which can be downloaded from <a href="https://drive.google.com/drive/folders/1bNSU7gLwkxDxjLI449XAyBSEfF6btoOD?usp=sharing">google drive</a>. This includes the GT depth map of LR imaiges (LR_depth.targ.gz). For the factor = 2 or 4, please manually downscale the HR images with your taget factor. <br>
-2. To download EndoScene dataset, please see <a href="https://polyp.grand-challenge.org/CVCClinicDB/">here</a>. The corresponding depth maps for LR images can be obtained through the following code to estimate.<br>
+1. We provide the HR and LR images (factor=8) for the Kvasir dataset, which can be downloaded from <a href="https://drive.google.com/drive/folders/1bNSU7gLwkxDxjLI449XAyBSEfF6btoOD?usp=sharing">google drive</a>. This includes the GT depth map of LR imaiges (LR_depth.targ.gz). For the factor = 2 or 4, please manually downscale the HR images according to the target factor. <br>
+2. To download EndoScene dataset, please see <a href="https://polyp.grand-challenge.org/CVCClinicDB/">here</a>. The corresponding depth maps for LR images can be obtained through the following depth estimation part to predict depth maps.<br>
 
 
 ## Training & Testing Model
@@ -57,4 +57,5 @@ If you find our work useful in your research or publication, please cite our wor
 }
 ```
 
-## Quest
+## Contact
+Please contact us <a href="wentichen7-c@my.cityu.edu.hk">here</a> if you have any question.
