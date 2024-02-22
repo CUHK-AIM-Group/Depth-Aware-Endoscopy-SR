@@ -29,7 +29,7 @@ Please modify the model and data path `pretrain_model_G`, `dataroot_GT`, `dataro
 ```
 sh ./launch/test.sh
 ```
-If you want to evaluate the model directly, you can download the dataset <a href="https://drive.google.com/file/d/1ERqS2XHk0Eg_0No_326o3hJflrOgqJF-/view?usp=sharing">here</a>. And modify the model path in `codes/options/test/test_depthNet.yml` and run `./launch/test.sh`. <br>
+If you want to evaluate the model directly, you can download the pre-trained models of our proposed method <a href="https://drive.google.com/file/d/1ERqS2XHk0Eg_0No_326o3hJflrOgqJF-/view?usp=sharing">here</a>. And modify the model path in `codes/options/test/test_depthNet.yml` and run `./launch/test.sh`. <br>
 
 ## Depth Estimation
 Here, we pre-trained a depth estimator based on <a href="https://github.com/nianticlabs/monodepth2">monodepth2</a> and use this model to generate the depth map as ground-truth depth map for our proposed method.<br>
