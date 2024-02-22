@@ -12,7 +12,7 @@ Please follow the `requirements.txt`
 
 ## Dataset
 In this work, we use the Kvasir and the EndoScene datasets. <br>
-1. We provide the HR and LR images (factor=8) for the Kvasir dataset, which can be downloaded from <a href="https://drive.google.com/drive/folders/1bNSU7gLwkxDxjLI449XAyBSEfF6btoOD?usp=sharing">google drive</a>. This includes the GT depth map of LR imaiges (LR_depth.targ.gz). For the factor = 2 or 4, please manually downscale the HR images according to the target factor. <br>
+1. We provide the HR and LR images (factor=8) for the Kvasir dataset, which can be downloaded from <a href="https://drive.google.com/drive/folders/1bNSU7gLwkxDxjLI449XAyBSEfF6btoOD?usp=sharing">google drive</a>. This includes the GT depth map of LR images (LR_depth.targ.gz). For the factor = 2 or 4, please manually downscale the HR images according to the target factor. <br>
 2. To download EndoScene dataset, please see <a href="https://polyp.grand-challenge.org/CVCClinicDB/">here</a>. The corresponding depth maps for LR images can be obtained through the following depth estimation part to predict depth maps.<br>
 
 
@@ -29,6 +29,8 @@ Please modify the model and data path `pretrain_model_G`, `dataroot_GT`, `dataro
 ```
 sh ./launch/test.sh
 ```
+If you want to evaluate the model directly, you can download the dataset <a href="https://drive.google.com/file/d/1ERqS2XHk0Eg_0No_326o3hJflrOgqJF-/view?usp=sharing">here</a>. And modify the model path in `codes/options/test/test_depthNet.yml` and run `./launch/test.sh`. <br>
+
 ## Depth Estimation
 Here, we pre-trained a depth estimator based on <a href="https://github.com/nianticlabs/monodepth2">monodepth2</a> and use this model to generate the depth map as ground-truth depth map for our proposed method.<br>
 Please download the <a href="https://drive.google.com/drive/folders/1bNSU7gLwkxDxjLI449XAyBSEfF6btoOD?usp=sharing">pre-trained model</a>, unzip `weights_19.tar.gz` and place it to `./codes/depth_estimation/pretrained_models/weights_19`
